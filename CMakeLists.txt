@@ -19,8 +19,9 @@ if (QtApp)
 endif()
 
 add_executable(app Src/Main.cpp ${QtResources})
+target_include_directories(app PUBLIC Include)
 target_link_libraries(app compileWarnings)
-target_compile_features(app PUBLIC cxx_std_17)
+target_compile_features(app PUBLIC cxx_std_20)
 
 if (QtApp)
 	qt5_use_modules(app Quick Core Network)

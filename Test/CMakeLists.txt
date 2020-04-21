@@ -29,6 +29,7 @@ endif()
 
 list(JOIN Sanitizers "," ListOfSanitizers)
 if (NOT "${ListOfSanitizers}" STREQUAL "")
+	target_compile_features(UnitTestOptions INTERFACE cxx_std_20)
 	target_compile_options(UnitTestOptions INTERFACE -fsanitize=${ListOfSanitizers})
 	target_link_options(UnitTestOptions INTERFACE -fsanitize=${ListOfSanitizers})
 endif()
@@ -41,7 +42,7 @@ target_link_libraries(UnitTestOptions INTERFACE GTest::GTest gmock compileWarnin
 target_include_directories(UnitTestOptions INTERFACE ${CMAKE_SOURCE_DIR}/Include)
 
 # Unit test target
-add_executable(UnitTests UnitTest.cpp GTestMain.cpp)
+add_executable(UnitTests EventParserTest.cpp GTestMain.cpp)
 target_link_libraries(UnitTests UnitTestOptions)
 gtest_discover_tests(UnitTests
 					TEST_SUFFIX .hostTests
@@ -59,9 +60,9 @@ set_target_properties(CompileFailureTest PROPERTIES
 				EXCLUDE_FROM_ALL TRUE
 				EXCLUDE_FROM_DEFAULT_BUILD TRUE)
 
-add_test(NAME CompileChecks
-		COMMAND ${CMAKE_COMMAND} --build . --target CompileFailureTest --config $<CONFIGURATION> WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-set_tests_properties(CompileChecks PROPERTIES WILL_FAIL TRUE)
+#add_test(NAME CompileChecks
+#		COMMAND ${CMAKE_COMMAND} --build . --target CompileFailureTest --config $<CONFIGURATION> WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+#set_tests_properties(CompileChecks PROPERTIES WILL_FAIL TRUE)
 
 # If gcovr is available add a target 'gcovr' that builds and runs available tests and creates a coverage report
 find_program(GCOVR gcovr)

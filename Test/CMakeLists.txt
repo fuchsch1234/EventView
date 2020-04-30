@@ -1,3 +1,4 @@
+# GTest from conan is used for tests, find_package is only required for gtest_discover_tests function
 find_package(GTest "1.10.0" REQUIRED)
 
 # Basic options for every unit test
@@ -30,7 +31,7 @@ endif()
 list(JOIN Sanitizers "," ListOfSanitizers)
 if (NOT "${ListOfSanitizers}" STREQUAL "")
 	target_compile_features(UnitTestOptions INTERFACE cxx_std_20)
-	target_compile_options(UnitTestOptions INTERFACE -fsanitize=${ListOfSanitizers})
+	target_compile_options(UnitTestOptions INTERFACE -fsanitize=${ListOfSanitizers} -Wno-gnu-zero-variadic-macro-arguments)
 	target_link_options(UnitTestOptions INTERFACE -fsanitize=${ListOfSanitizers})
 endif()
 
@@ -38,7 +39,7 @@ endif()
 target_compile_options(UnitTestOptions INTERFACE --coverage -O0 -g)
 target_link_options(UnitTestOptions INTERFACE --coverage)
 # Inherit default compiler options and link against googletest
-target_link_libraries(UnitTestOptions INTERFACE GTest::GTest gmock compileWarnings)
+target_link_libraries(UnitTestOptions INTERFACE CONAN_PKG::gtest compileWarnings)
 target_include_directories(UnitTestOptions INTERFACE ${CMAKE_SOURCE_DIR}/Include)
 
 # Unit test target

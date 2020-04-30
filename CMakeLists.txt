@@ -24,7 +24,7 @@ option(QtApp "This project builds a QT QML app" OFF)
 set(QtResources "")
 
 if (QtApp)
-	find_package(Qt5 COMPONENTS Quick Core Network REQUIRED)
+	find_package(Qt5 COMPONENTS Quick Core Network SerialPort REQUIRED)
 	find_package(Qt5QuickCompiler)
 
 	set(CMAKE_AUTOMOC ON)
@@ -39,7 +39,7 @@ target_link_libraries(app compileWarnings CONAN_PKG::spdlog)
 target_compile_features(app PUBLIC cxx_std_20)
 
 if (QtApp)
-	qt5_use_modules(app Quick Core Network)
+	target_link_libraries(app Qt5::Quick Qt5::Core Qt5::Network Qt5::SerialPort)
 endif()
 
 option(EnableClangTidy "Enable clang-tidy" ON)

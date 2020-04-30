@@ -62,18 +62,22 @@ namespace fuchsch::eventparser {
 		uint32_t data;
 	};
 
-	using TPIUPacket = std::variant<
-			SynchronizationPacket,
-			OverflowPacket,
-			LocalTimestampPacket,
-			GlobalTimestamp1Packet,
-			GlobalTimestamp2Packet,
-			ExtensionPacket,
-			InstrumentationPacket,
-			EventCounterPacket,
-			ExceptionTracePacket,
-			PCSamplingPacket,
-			DataTracePacket>;
+	using TPIUPacket = Span<unsigned char>;
+
+	struct TPIUEvent {
+		uint64_t timestamp;
+		Span<unsigned char> data;
+	};
+
+	struct ExceptionTrace {
+		uint64_t timestamp;
+		int exception;
+		enum class Event {
+			START,
+			STOP,
+			RESUME,
+		} event;
+	};
 
 	/**
 	 * @brief Calculate the length of a TPIU packet in a byte array.

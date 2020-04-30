@@ -43,7 +43,7 @@ target_link_libraries(UnitTestOptions INTERFACE CONAN_PKG::gtest compileWarnings
 target_include_directories(UnitTestOptions INTERFACE ${CMAKE_SOURCE_DIR}/Include)
 
 # Unit test target
-add_executable(UnitTests EventParserTest.cpp GTestMain.cpp)
+add_executable(UnitTests EventParserTest.cpp ObserverTest.cpp GTestMain.cpp)
 target_link_libraries(UnitTests UnitTestOptions)
 gtest_discover_tests(UnitTests
 					TEST_SUFFIX .hostTests

@@ -5,25 +5,25 @@
  *      Author: cf
  */
 
-#include <QCommandLineParser>
-#include <QSerialPort>
-#include <QSerialPortInfo>
-#include <QThread>
+#include <QtCore/QCommandLineParser>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 #include <spdlog/spdlog.h>
 
 #include <fuchsch/EventParser/EventParser.h>
 #include <fuchsch/EventParser/ExceptionTracer.h>
+#include <fuchsch/EventParser/InstrumentationTracer.h>
 #include <fuchsch/EventParser/PacketSplitter.h>
 #include <fuchsch/EventParser/TimestampProcessor.h>
 
 using namespace ::fuchsch::eventparser;
 
-class TraceReceiver: public fuchsch::utilities::Observer<ExceptionTrace> {
+class TraceReceiver: public fuchsch::utilities::Observer<InstrumentationTrace> {
 public:
 
-	void operator()(ExceptionTrace const &trace) noexcept override {
-		spdlog::info("[{0}] Exception {1} {2}", trace.timestamp, trace.exception, trace.event);
+	void operator()(InstrumentationTrace const &trace) noexcept override {
+		spdlog::info("[{0}] {1}: {2}", trace.timestamp.count(), trace.port, trace.data);
 	}
 
 };
@@ -31,7 +31,7 @@ public:
 static void Run(QString portName, int baud) {
 	PacketSplitter splitter;
 	TimestampProcessor processor;
-	ExceptionTracer tracer;
+	InstrumentationTracer tracer;
 	TraceReceiver receiver;
 	splitter >> processor >> tracer >> receiver;
 

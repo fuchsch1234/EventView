@@ -31,10 +31,10 @@ public:
 				timestamp |= (static_cast<uint32_t>(c) & 0x7F) << shift;
 				shift += 6;
 			}
-			localTimestamp += timestamp;
+			localTimestamp += TPIUToTimestamp(timestamp);
 		} else if ((packet[0] & 0x8F) == 0 && (packet[0] & 0x70) != 0x70) {
 			// Single byte local timestamp packet
-			localTimestamp += (packet[0] & 0x70) >> 4;
+			localTimestamp += TPIUToTimestamp((packet[0] & 0x70) >> 4);
 		} else if (packet[0] == 0 || packet[0] == 0x94 || packet[0] == 0xB4) {
 			// Ignore synchronization and global timestamp packets for now
 		} else {
@@ -42,13 +42,17 @@ public:
 		}
 	}
 
-	uint64_t LocalTimestamp() {
+	Timestamp LocalTimestamp() {
 		return localTimestamp;
 	}
 
 private:
 
-	uint64_t localTimestamp = 0;
+	Timestamp TPIUToTimestamp(uint64_t ts) const noexcept {
+		return std::chrono::milliseconds(ts * 64 * 1000 / 120000000);
+	}
+
+	Timestamp localTimestamp = { };
 
 };
 

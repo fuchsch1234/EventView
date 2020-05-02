@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <exception>
 #include <variant>
 #include <cstring>
@@ -21,11 +22,6 @@ namespace fuchsch::eventparser {
 		uint8_t page;
 	};
 
-	struct InstrumentationPacket {
-		uint8_t port;
-		uint32_t data;
-	};
-
 	struct EventCounterPacket {};
 
 	struct PCSamplingPacket {
@@ -37,21 +33,29 @@ namespace fuchsch::eventparser {
 		uint32_t data;
 	};
 
+	using Timestamp = std::chrono::milliseconds;
+
 	using TPIUPacket = Span<unsigned char>;
 
 	struct TPIUEvent {
-		uint64_t timestamp;
+		Timestamp timestamp;
 		Span<unsigned char> data;
 	};
 
 	struct ExceptionTrace {
-		uint64_t timestamp;
+		Timestamp timestamp;
 		int exception;
 		enum class Event {
 			START,
 			STOP,
 			RESUME,
 		} event;
+	};
+
+	struct InstrumentationTrace {
+		Timestamp timestamp;
+		uint8_t port;
+		uint32_t data;
 	};
 
 	/**

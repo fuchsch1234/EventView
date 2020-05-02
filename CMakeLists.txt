@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.17)
 
 project(app CXX)
 
@@ -14,6 +14,7 @@ endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
+conan_add_remote(NAME bincrafters INDEX 1 URL https://api.bintray.com/conan/bincrafters/public-conan)
 conan_cmake_run(
 	REQUIRES spdlog/[>=1.4.1]
 		gtest/[>=1.10.0]						
@@ -24,7 +25,7 @@ option(QtApp "This project builds a QT QML app" OFF)
 set(QtResources "")
 
 if (QtApp)
-	find_package(Qt5 COMPONENTS Quick Core Network SerialPort REQUIRED)
+	find_package(Qt5 COMPONENTS Quick Core SerialPort REQUIRED)
 	find_package(Qt5QuickCompiler)
 
 	set(CMAKE_AUTOMOC ON)
@@ -34,12 +35,13 @@ if (QtApp)
 endif()
 
 add_executable(app Src/Main.cpp ${QtResources})
-target_include_directories(app PUBLIC Include)
+target_include_directories(app PRIVATE Include)
 target_link_libraries(app compileWarnings CONAN_PKG::spdlog)
-target_compile_features(app PUBLIC cxx_std_20)
+target_compile_features(app PRIVATE cxx_std_20)
+target_precompile_headers(app PRIVATE Include/PCH.h)
 
 if (QtApp)
-	target_link_libraries(app Qt5::Quick Qt5::Core Qt5::Network Qt5::SerialPort)
+	target_link_libraries(app Qt5::Quick Qt5::Core Qt5::SerialPort)
 endif()
 
 option(EnableClangTidy "Enable clang-tidy" ON)
